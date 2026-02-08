@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چوونەژوورەوە</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">چوونەژوورەوە</h1>
+        
+        <div class="login-box">
+            <label for="passwordInput">کلیل</label>
+            <input 
+                type="password" 
+                id="passwordInput" 
+                placeholder="کلیل بنووسە"
+            >
+            
+            <button id="submitBtn">داگرتن</button>
+            
+            <p id="message"></p>
+        </div>
+        
+        <div class="footer">
+            <p class="copyright">پارێزراوە بۆ شابڵۆد© ٢٠٢٦</p>
+        </div>
+    </div>
+
+    <script>
+        let correctPasswords = [];
+        let redirectUrl = '';
+
+        fetch('password.json')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                correctPasswords = data.passwords;
+                redirectUrl = data.redirectUrl;
+            })
+            .catch(function(error) {
+                console.error('هەڵە:', error);
+            });
+
+        const passwordInput = document.getElementById('passwordInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const message = document.getElementById('message');
+
+        submitBtn.addEventListener('click', function() {
+            const enteredPassword = passwordInput.value;
+            
+            if (enteredPassword === '') {
+                message.textContent = 'بۆشایی پڕبکەرەوە';
+                message.className = 'warning';
+                return;
+            }
+            
+            if (correctPasswords.includes(enteredPassword)) {
+                message.textContent = 'ڕاستە';
+                message.className = 'success';
+                
+                setTimeout(function() {
+                    window.location.href = redirectUrl;
+                }, 2000);
+                
+            } else {
+                message.textContent = 'هەڵەیە';
+                message.className = 'error';
+            }
+        });
+
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
